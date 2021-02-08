@@ -1,0 +1,32 @@
+﻿<Window x:Class="LoadRetimer.FinalRetimeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoadRetimer"
+        mc:Ignorable="d"
+        Icon="/Icon.ico"
+        Title="Final Retime" Height="300" Width="500" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Final Retime without loads:" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="25"/>
+        <Label x:Name="WOLoads" Grid.Row="1" Grid.ColumnSpan="2" Content="--:--.---" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="25"/>
+        <Label Grid.Row="2" Content="Retime with loads:" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label Grid.Row="2" Grid.Column="1" Content="Loads:" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label x:Name="WLoads" Grid.Row="3" Content="--:--.---" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label x:Name="Loads" Grid.Row="3" Grid.Column="1" Content="--:--.---" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
+        <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Generated with LoadRetimer v1.0.0" HorizontalAlignment="Center" FontSize="10" />
+        <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Close" Click="Button_Click" />
+    </Grid>
+</Window>

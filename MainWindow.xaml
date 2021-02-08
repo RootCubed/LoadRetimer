@@ -1,0 +1,83 @@
+﻿<Window x:Class="LoadRetimer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoadRetimer"
+        xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
+        mc:Ignorable="d"
+        Icon="/Icon.ico"
+        Title="Load Retimer" Height="450" Width="1000" PreviewKeyDown="Window_KeyDown" MinHeight="300" MinWidth="900" SizeChanged="Window_SizeChanged">
+    <Grid MouseDown="Video_MouseDown">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0" Grid.ColumnSpan="3">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open Video" Click="OpenFile_Click" />
+                <MenuItem Header="_Open Loads" Click="OpenLoads_Click" />
+                <MenuItem Header="_Save Loads" Click="SaveLoads_Click" />
+                <MenuItem Header="_Info" Click="Info_Click" />
+            </MenuItem>
+        </Menu>
+        <Label Content="No video loaded." Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <ffme:MediaElement Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" LoadedBehavior="Pause" x:Name="Video" MediaOpened="Video_MediaOpened"/>
+        <Rectangle x:Name="Rect" Grid.Row="1" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="#20000000" />
+        
+        <Rectangle Grid.Row="1" Grid.Column="1">
+            <Rectangle.Fill>
+                <VisualBrush x:Name="Magnifier" Visual="{Binding ., ElementName=Video}" Stretch="Uniform" Viewbox="0, 0, 533, 352" ViewboxUnits="Absolute" Viewport="0, 0, 1, 1" ViewportUnits="RelativeToBoundingBox" />
+            </Rectangle.Fill>
+            <Rectangle.Effect>
+                <local:BrightnessEffect />
+            </Rectangle.Effect>
+        </Rectangle>
+        <StackPanel Name="VideoInfo" Grid.Row="2" Grid.Column="1">
+            <Label Content="Video info" FontWeight="Bold" />
+            <Label x:Name="FPSLabel" Content="FPS:" />
+            <Label x:Name="DurationLabel" Content="Duration:" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <local:LoadInfo Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="TotalRunInfo"/>
+            <Button Grid.Row="1" Grid.Column="0" Content="Start Run" Click="StartRun_Click" />
+            <Button Grid.Row="1" Grid.Column="1" Content="End Run" Click="EndRun_Click" />
+        </Grid>
+        
+        <ListBox Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" x:Name="LoadBox" HorizontalContentAlignment="Stretch" />
+        <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="-1 frame" Click="FrameBack_Click" />
+            <Button Grid.Column="1" x:Name="PlayPause" Content="Play" Click="ButtonPlayPause_Click" />
+            <Button Grid.Column="2" Content="+1 frame" Click="FrameForward_Click" />
+            <Button Grid.Column="3" Content="Begin Load" Click="BeginLoad_Click" />
+            <Button Grid.Column="4" Content="End Load" Click="EndLoad_Click" />
+        </Grid>
+        <Slider Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" x:Name="Slider" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted" ValueChanged="Slider_ValueChanged" Maximum="1000" LargeChange="0" SmallChange="0"/>
+        <Label x:Name="TimePosition" Grid.Row="3" Grid.Column="1" Content="00:00.000" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Courier New" />
+        <Button Grid.Row="4" Grid.Column="2" Content="Retime!" Click="Retime_Click" />
+    </Grid>
+</Window>

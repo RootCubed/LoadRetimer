@@ -1,0 +1,14 @@
+// compile with:
+// fxc /T ps_2_0 /E main /Fo"Shader/brightness.ps" "Shader/brightness.txt"
+
+sampler2D input : register(s0);
+
+float4 main(float2 uv : TEXCOORD) : COLOR {
+    float4 color = tex2D(input, uv);
+    float4 result = color;
+    float brightness = result;
+    if (brightness < 0.05) {
+        result = color * 10;
+    }
+    return result;
+}
