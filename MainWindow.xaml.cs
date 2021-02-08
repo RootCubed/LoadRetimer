@@ -95,6 +95,7 @@ namespace LoadRetimer {
             timerAnalyzer.Tick += Analyzer_Tick;
             timerAnalyzer.Start();
         }
+
         private void ButtonPlayPause_Click(object sender, RoutedEventArgs e) {
             if (!Video.IsOpen) return;
             if (Video.MediaState == Unosquare.FFME.Common.MediaPlaybackState.Play) {
@@ -439,6 +440,14 @@ namespace LoadRetimer {
                 Rect.Width = p2.X - p1.X;
                 Rect.Height = p2.Y - p1.Y;
             }
+        }
+    }
+
+    class Helper {
+        public static TimeSpan RoundTimeSpanMillis(TimeSpan ts) {
+            long ticks = (long) Math.Round(ts.Ticks / 10_000.0) * 10_000;
+            var res = new TimeSpan(ticks);
+            return res;
         }
     }
 }

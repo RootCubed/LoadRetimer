@@ -39,15 +39,18 @@ namespace LoadRetimer {
             LoadFrameDurationF.Content = "---";
             LoadFrameDurationS.Content = "---";
             if (frameStart > -1) {
-                LoadFrameBeginS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", new TimeSpan((long)(frameStart / MainWindow.frameRate * 10_000_000)));
+                TimeSpan tmp = new TimeSpan((long)(frameStart / MainWindow.frameRate * 10_000_000));
+                LoadFrameBeginS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(tmp));
             }
             if (frameEnd > -1) {
-                LoadFrameEndS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", new TimeSpan((long)(frameEnd / MainWindow.frameRate * 10_000_000)));
+                TimeSpan tmp = new TimeSpan((long)(frameEnd / MainWindow.frameRate * 10_000_000));
+                LoadFrameEndS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(tmp));
             }
             if (frameStart > -1 && frameEnd > -1) {
                 int frameDuration = FrameDuration();
                 LoadFrameDurationF.Content = String.Format("{0} frames", frameDuration);
-                LoadFrameDurationS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", new TimeSpan((long)(frameDuration / MainWindow.frameRate * 10_000_000)));
+                TimeSpan tmp = new TimeSpan((long)(frameDuration / MainWindow.frameRate * 10_000_000));
+                LoadFrameDurationS.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(tmp));
             }
         }
 

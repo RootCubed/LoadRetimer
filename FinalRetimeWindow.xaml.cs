@@ -12,9 +12,9 @@ namespace LoadRetimer {
 
         public FinalRetimeWindow(TimeSpan wloads, TimeSpan loads) {
             InitializeComponent();
-            WLoads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", wloads);
-            Loads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", loads);
-            WOLoads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", wloads - loads);
+            WLoads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(wloads));
+            Loads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(loads));
+            WOLoads.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(wloads - loads));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e) {
