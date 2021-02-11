@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -20,7 +17,9 @@ namespace LoadRetimer {
         private DispatcherTimer timerVideo;
         private DispatcherTimer timerAnalyzer;
 
-        readonly string[] loadNames = new string[] {
+        int loadType = 0;
+
+        readonly string[] anyPercentLoadNames = new string[] {
             "1-1 Start",
             "1-1 End",
             "1-2 Start",
@@ -80,6 +79,7 @@ namespace LoadRetimer {
             InitializeComponent();
             Unosquare.FFME.Library.FFmpegDirectory = @"./ffmpeg";
             TotalRunInfo.SetName("Entire Run");
+            TotalRunInfo.MakeUnchangable();
 
             Video.ScrubbingEnabled = false;
 
@@ -127,7 +127,12 @@ namespace LoadRetimer {
 
         private LoadInfo CreateNewLoadInfo() {
             ListBoxItem lbi = new ListBoxItem();
-            LoadInfo newLoad = new LoadInfo(loadNames[LoadBox.Items.Count]);
+            LoadInfo newLoad = new LoadInfo(String.Format("Load {0}", LoadBox.Items.Count + 1));
+            if (loadType == 0) {
+                if (LoadBox.Items.Count < anyPercentLoadNames.Length) {
+                    newLoad.SetName(anyPercentLoadNames[LoadBox.Items.Count]);
+                }
+            }
             lbi.Content = newLoad;
             LoadBox.Items.Add(lbi);
             LoadBox.ScrollIntoView(lbi);
@@ -140,10 +145,10 @@ namespace LoadRetimer {
             if (LoadBox.SelectedItem == null) {
                 CreateNewLoadInfo();
                 LoadInfo selLoad = (LoadInfo)((ListBoxItem)LoadBox.SelectedItem).Content;
-                selLoad.SetBegin(Video.FramePosition);
+                selLoad.SetBegin(TrueFramePos());
             } else {
                 LoadInfo selLoad = (LoadInfo)((ListBoxItem)LoadBox.SelectedItem).Content;
-                selLoad.SetBegin(Video.FramePosition);
+                selLoad.SetBegin(TrueFramePos());
                 LoadBox.SelectedItem = null;
             }
         }
@@ -152,10 +157,10 @@ namespace LoadRetimer {
             if (LoadBox.SelectedItem == null) {
                 CreateNewLoadInfo();
                 LoadInfo selLoad = (LoadInfo)((ListBoxItem)LoadBox.SelectedItem).Content;
-                selLoad.SetEnd(Video.FramePosition);
+                selLoad.SetEnd(TrueFramePos());
             } else {
                 LoadInfo selLoad = (LoadInfo)((ListBoxItem)LoadBox.SelectedItem).Content;
-                selLoad.SetEnd(Video.FramePosition);
+                selLoad.SetEnd(TrueFramePos());
                 LoadBox.SelectedItem = null;
             }
         }
@@ -181,9 +186,14 @@ namespace LoadRetimer {
                 Filter = "Video files (*.mp4, *.mkv, *.flv, *.wmv, *.avi)|*.mp4;*.mkv;*.flv;*.wmv;*.avi|All files (*.*)|*.*"
             };
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+                if (Video.IsOpen) {
+                    Video.Close();
+                }
                 Video.Open(new Uri(ofd.FileName));
             }
         }
+
+        const byte CURR_VERSION = 2;
 
         private void OpenLoads_Click(object sender, RoutedEventArgs e) {
             var ofd = new OpenFileDialog {
@@ -193,7 +203,13 @@ namespace LoadRetimer {
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var f = ofd.OpenFile();
                 var binReader = new BinaryReader(f);
-                bool hasTotalRun = binReader.ReadByte() == 1;
+                int version = binReader.ReadByte();
+                bool hasTotalRun;
+                if (version >= 2) { // the version field didn't exist before
+                    hasTotalRun = binReader.ReadByte() == 1;
+                } else {
+                    hasTotalRun = version == 1;
+                }
                 int loadCount = binReader.ReadByte();
                 frameRate = binReader.ReadDouble();
                 FPSLabel.Content = String.Format("FPS: {0:F2}", frameRate);
@@ -211,7 +227,12 @@ namespace LoadRetimer {
                     LoadInfo newLoad = CreateNewLoadInfo();
                     newLoad.SetBegin(new TimeSpan((long)(startFrames / frameRate * 10_000_000)));
                     newLoad.SetEnd(new TimeSpan((long)(endFrames / frameRate * 10_000_000)));
+                    if (version >= 2) {
+                        string loadName = binReader.ReadString();
+                        newLoad.SetName(loadName);
+                    }
                 }
+                f.Close();
             }
         }
 
@@ -223,6 +244,7 @@ namespace LoadRetimer {
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 var f = ofd.OpenFile();
                 var binWriter = new BinaryWriter(f);
+                binWriter.Write(CURR_VERSION);
                 if (TotalRunInfo.FrameDuration() > 0) {
                     binWriter.Write((byte)1);
                 } else {
@@ -238,6 +260,7 @@ namespace LoadRetimer {
                     LoadInfo li = (LoadInfo)((ListBoxItem)LoadBox.Items[i]).Content;
                     binWriter.Write((UInt32)li.frameStart);
                     binWriter.Write((UInt32)li.frameEnd);
+                    binWriter.Write(li.LoadName.Text);
                 }
             }
         }
@@ -282,12 +305,12 @@ namespace LoadRetimer {
 
         private void StartRun_Click(object sender, RoutedEventArgs e) {
             if (!Video.IsOpen) return;
-            TotalRunInfo.SetBegin(Video.FramePosition);
+            TotalRunInfo.SetBegin(TrueFramePos());
         }
 
         private void EndRun_Click(object sender, RoutedEventArgs e) {
             if (!Video.IsOpen) return;
-            TotalRunInfo.SetEnd(Video.FramePosition);
+            TotalRunInfo.SetEnd(TrueFramePos());
         }
 
         private bool userChanging = false;
@@ -296,7 +319,7 @@ namespace LoadRetimer {
             if (userChanging) {
                 if (!Video.IsOpen) return;
                 var ts = new TimeSpan((long)(Video.NaturalDuration.GetValueOrDefault().TotalSeconds * Slider.Value * 10_000));
-                Video.Position = ts;
+                Video.Position = ts + Video.PlaybackStartTime.GetValueOrDefault();
             }
         }
 
@@ -392,10 +415,13 @@ namespace LoadRetimer {
 
         private void TimerVideo_Tick(object sender, object e) {
             if (!Video.IsOpen) return;
-            Slider.Value = Video.Position.TotalMilliseconds / Video.NaturalDuration.GetValueOrDefault().TotalMilliseconds * 1000;
-            TimePosition.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", new TimeSpan((long)(Video.Position.TotalMilliseconds * 10_000)));
             var pos = Mouse.GetPosition(Video);
             Magnifier.Viewbox = new Rect(pos.X - 10, pos.Y + 10, 20, 20);
+
+            var tmp = new TimeSpan((long)(TrueFramePos().TotalMilliseconds * 10_000));
+            TimePosition.Content = String.Format("{0:hh\\:mm\\:ss\\.fff}", Helper.RoundTimeSpanMillis(tmp));
+            if (userChanging) return;
+            Slider.Value = TrueFramePos().TotalMilliseconds / Video.NaturalDuration.GetValueOrDefault().TotalMilliseconds * 1000;
         }
 
         private async void Analyzer_Tick(object sender, object e) {
@@ -416,6 +442,10 @@ namespace LoadRetimer {
                     await Video.StepBackward();
                 }
             }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            loadType = LoadCategory.SelectedIndex;
         }
 
         private System.Drawing.Bitmap tempBmp;
@@ -441,11 +471,21 @@ namespace LoadRetimer {
                 Rect.Height = p2.Y - p1.Y;
             }
         }
+
+        private TimeSpan TrueFramePos() {
+            return (TimeSpan)(Video.FramePosition - Video.PlaybackStartTime);
+        }
     }
 
     class Helper {
         public static TimeSpan RoundTimeSpanMillis(TimeSpan ts) {
             long ticks = (long) Math.Round(ts.Ticks / 10_000.0) * 10_000;
+            var res = new TimeSpan(ticks);
+            return res;
+        }
+
+        public static TimeSpan CeilTimeSpanMillis(TimeSpan ts) {
+            long ticks = (long)Math.Ceiling(ts.Ticks / 10_000.0) * 10_000;
             var res = new TimeSpan(ticks);
             return res;
         }

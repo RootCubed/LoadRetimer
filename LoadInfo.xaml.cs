@@ -22,7 +22,11 @@ namespace LoadRetimer {
         }
 
         public void SetName(string s) {
-            LoadName.Content = s;
+            LoadName.Text = s;
+        }
+
+        public void MakeUnchangable() {
+            LoadName.IsReadOnly = true;
         }
 
         public void SetBegin(TimeSpan begin) {
@@ -60,6 +64,22 @@ namespace LoadRetimer {
             } else {
                 return 0;
             }
+        }
+
+        private void LoadFrameBeginS_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            MainWindow parentWindow = (MainWindow)MainWindow.GetWindow(this);
+            if (parentWindow == null) return;
+            TimeSpan tmp = new TimeSpan((long)(frameStart / MainWindow.frameRate * 10_000_000));
+            parentWindow.Video.Position = Helper.CeilTimeSpanMillis(tmp + parentWindow.Video.PlaybackStartTime.GetValueOrDefault());
+        }
+
+        private void LoadFrameEndS_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+            MainWindow parentWindow = (MainWindow)MainWindow.GetWindow(this);
+            if (parentWindow == null) return;
+            TimeSpan tmp = new TimeSpan((long)(frameEnd / MainWindow.frameRate * 10_000_000));
+
+            // not exactly sure why I can't just round here...
+            parentWindow.Video.Position = Helper.CeilTimeSpanMillis(tmp + parentWindow.Video.PlaybackStartTime.GetValueOrDefault());
         }
     }
 }

@@ -15,12 +15,14 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Label x:Name="LoadName" Content="Load" Grid.ColumnSpan="2" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+        <TextBox x:Name="LoadName" Grid.ColumnSpan="2" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            Load
+        </TextBox>
         <Separator VerticalAlignment="Top" Margin="0,49,0,0" Grid.ColumnSpan="2"/>
         <Label x:Name="LoadFrameDurationF" Grid.Row="1" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold"/>
         <Label x:Name="LoadFrameDurationS" Grid.Row="2" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold"/>
-        <Label x:Name="LoadFrameBeginS" Grid.Row="1" Grid.Column="1" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <Label x:Name="LoadFrameEndS" Grid.Row="2" Grid.Column="1" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <Label x:Name="LoadFrameBeginS" Grid.Row="1" Grid.Column="1" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MouseUp="LoadFrameBeginS_MouseUp" Foreground="#FF0645AD" Cursor="Hand"/>
+        <Label x:Name="LoadFrameEndS" Grid.Row="2" Grid.Column="1" Content="---" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" MouseUp="LoadFrameEndS_MouseUp" Foreground="#FF0645AD" Cursor="Hand"/>
 
     </Grid>
 </UserControl>
