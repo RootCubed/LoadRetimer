@@ -10,6 +10,8 @@ namespace LoadRetimer {
         public long frameStart = -1;
         public long frameEnd = -1;
 
+        private bool isInclusive = false;
+
         public LoadInfo() {
             InitializeComponent();
             TryCalculate();
@@ -27,6 +29,10 @@ namespace LoadRetimer {
 
         public void MakeUnchangable() {
             LoadName.IsReadOnly = true;
+        }
+
+        public void MakeNonInclusive() {
+            isInclusive = true;
         }
 
         public void SetBegin(TimeSpan begin) {
@@ -60,7 +66,8 @@ namespace LoadRetimer {
 
         public int FrameDuration() {
             if (frameStart > -1 && frameEnd > -1) {
-                return (int)(frameEnd - frameStart);
+                long addEnd = (isInclusive) ? 0 : 1;
+                return (int)(frameEnd - frameStart + addEnd); // get inclusive length
             } else {
                 return 0;
             }

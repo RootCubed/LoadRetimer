@@ -79,6 +79,7 @@ namespace LoadRetimer {
             InitializeComponent();
             Unosquare.FFME.Library.FFmpegDirectory = @"./ffmpeg";
             TotalRunInfo.SetName("Entire Run");
+            TotalRunInfo.MakeNonInclusive();
             TotalRunInfo.MakeUnchangable();
 
             Video.ScrubbingEnabled = false;
