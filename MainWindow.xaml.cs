@@ -274,6 +274,8 @@ namespace LoadRetimer {
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
             if (!Video.IsOpen) return;
+            if (FocusManager.GetFocusedElement(this) is System.Windows.Controls.TextBox) return;
+
             if (e.Key == Key.A) {
                 Video.StepBackward();
                 e.Handled = true;
@@ -301,6 +303,11 @@ namespace LoadRetimer {
             if (e.Key == Key.Space) {
                 ButtonPlayPause_Click(null, null);
                 e.Handled = true;
+            }
+            if (e.Key == Key.Delete || e.Key == Key.Back) {
+                if (LoadBox.SelectedItem != null) {
+                    LoadBox.Items.Remove(LoadBox.SelectedItem);
+                }
             }
         }
 
@@ -450,6 +457,15 @@ namespace LoadRetimer {
         }
 
         private System.Drawing.Bitmap tempBmp;
+
+        private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            var mouseWasDownOn = e.Source as FrameworkElement;
+            if (mouseWasDownOn != null) {
+                if (!(mouseWasDownOn is LoadInfo)) {
+                    LoadBox.SelectedItem = null;
+                }
+            }
+        }
 
         private bool IsBlack(System.Drawing.Bitmap bitmap) {
             tempBmp = bitmap.Clone(new System.Drawing.Rectangle(rectX1, rectY1, rectX2 - rectX1, rectY2 - rectY1), bitmap.PixelFormat);

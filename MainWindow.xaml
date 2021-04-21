@@ -7,7 +7,7 @@
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
         mc:Ignorable="d"
         Icon="/Icon.ico"
-        Title="Load Retimer" Height="450" Width="1000" PreviewKeyDown="Window_KeyDown" MinHeight="300" MinWidth="900" SizeChanged="Window_SizeChanged">
+        Title="Load Retimer" Height="450" Width="1000" PreviewKeyDown="Window_KeyDown" MinHeight="300" MinWidth="900" SizeChanged="Window_SizeChanged" PreviewMouseLeftButtonDown="Window_PreviewMouseLeftButtonDown">
     <Grid MouseDown="Video_MouseDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
