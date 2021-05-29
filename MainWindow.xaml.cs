@@ -194,7 +194,7 @@ namespace LoadRetimer {
             }
         }
 
-        const byte CURR_VERSION = 2;
+        const byte CURR_VERSION = 3;
 
         private void OpenLoads_Click(object sender, RoutedEventArgs e) {
             var ofd = new OpenFileDialog {
@@ -211,7 +211,12 @@ namespace LoadRetimer {
                 } else {
                     hasTotalRun = version == 1;
                 }
-                int loadCount = binReader.ReadByte();
+                uint loadCount;
+                if (version >= 3) {
+                    loadCount = binReader.ReadUInt32();
+                } else {
+                    loadCount = binReader.ReadByte();
+                }
                 frameRate = binReader.ReadDouble();
                 FPSLabel.Content = String.Format("FPS: {0:F2}", frameRate);
                 if (hasTotalRun) {
@@ -251,7 +256,7 @@ namespace LoadRetimer {
                 } else {
                     binWriter.Write((byte)0);
                 }
-                binWriter.Write((byte)LoadBox.Items.Count);
+                binWriter.Write((UInt32)LoadBox.Items.Count);
                 binWriter.Write(frameRate);
                 if (TotalRunInfo.FrameDuration() > 0) {
                     binWriter.Write((UInt32)TotalRunInfo.frameStart);
@@ -461,7 +466,7 @@ namespace LoadRetimer {
         private void Window_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             var mouseWasDownOn = e.Source as FrameworkElement;
             if (mouseWasDownOn != null) {
-                if (!(mouseWasDownOn is LoadInfo)) {
+                if (mouseWasDownOn is not (LoadInfo or System.Windows.Controls.Button)) {
                     LoadBox.SelectedItem = null;
                 }
             }
@@ -490,6 +495,7 @@ namespace LoadRetimer {
         }
 
         private TimeSpan TrueFramePos() {
+            if (Video.PlaybackStartTime == null) return new TimeSpan(0);
             return (TimeSpan)(Video.FramePosition - Video.PlaybackStartTime);
         }
     }

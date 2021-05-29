@@ -26,7 +26,7 @@
         <Label Grid.Row="2" Grid.Column="1" Content="Loads:" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
         <Label x:Name="WLoads" Grid.Row="3" Content="--:--.---" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
         <Label x:Name="Loads" Grid.Row="3" Grid.Column="1" Content="--:--.---" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" FontSize="15"/>
-        <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Generated with LoadRetimer v1.3.1" HorizontalAlignment="Center" FontSize="10" />
+        <Label Grid.Row="4" Grid.ColumnSpan="2" Content="Generated with LoadRetimer v1.4" HorizontalAlignment="Center" FontSize="10" />
         <Button Grid.Row="5" Grid.ColumnSpan="2" Content="Close" Click="Button_Click" />
     </Grid>
 </Window>
