@@ -99,6 +99,12 @@ namespace LoadRetimer {
             };
             timerAnalyzer.Tick += Analyzer_Tick;
             timerAnalyzer.Start();
+
+            if (File.Exists("defaultNames.lns")) {
+                LoadCustomNames("defaultNames.lns");
+            } else {
+                customLoadNames = anyPercentLoadNames.ToList<string>();
+            }
         }
 
         private void LoadCustomNames(string filename) {
