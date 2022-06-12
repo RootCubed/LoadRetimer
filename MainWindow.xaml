@@ -65,7 +65,7 @@
         <ListBox Grid.Row="2" Grid.Column="2" x:Name="LoadBox" HorizontalContentAlignment="Stretch" />
         <ComboBox x:Name="LoadCategory" Grid.Row="3" Grid.Column="2" SelectionChanged="ComboBox_SelectionChanged">
             <ComboBoxItem IsSelected="True">NSMBW Any%</ComboBoxItem>
-            <ComboBoxItem>Other</ComboBoxItem>
+            <ComboBoxItem>Generic/Extra Loads</ComboBoxItem>
         </ComboBox>
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>

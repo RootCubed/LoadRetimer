@@ -112,6 +112,9 @@ namespace LoadRetimer {
             foreach (string line in File.ReadLines(filename)) {
                 customLoadNames.Add(line);
             }
+            string categoryName = customLoadNames[0];
+            ((ComboBoxItem)LoadCategory.Items[0]).Content = categoryName;
+            customLoadNames.RemoveAt(0);
             for (int i = 0; i < LoadBox.Items.Count; i++) {
                 String newName;
                 if (i < customLoadNames.Count) {
