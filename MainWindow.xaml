@@ -24,6 +24,7 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="3">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open Video" Click="OpenFile_Click" />
+                <MenuItem Header="_Open Load Names" Click="OpenLoadNames_Click" />
                 <MenuItem Header="_Open Loads" Click="OpenLoads_Click" />
                 <MenuItem Header="_Save Loads" Click="SaveLoads_Click" />
                 <MenuItem Header="_Info" Click="Info_Click" />
