@@ -103,7 +103,7 @@ namespace LoadRetimer {
             if (File.Exists("defaultNames.lns")) {
                 LoadCustomNames("defaultNames.lns");
             } else {
-                customLoadNames = anyPercentLoadNames.ToList<string>();
+                customLoadNames = anyPercentLoadNames.ToList();
             }
         }
 
@@ -116,7 +116,7 @@ namespace LoadRetimer {
             ((ComboBoxItem)LoadCategory.Items[0]).Content = categoryName;
             customLoadNames.RemoveAt(0);
             for (int i = 0; i < LoadBox.Items.Count; i++) {
-                String newName;
+                string newName;
                 if (i < customLoadNames.Count) {
                     newName = customLoadNames[i];
                 } else {
