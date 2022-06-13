@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -18,6 +20,8 @@ namespace LoadRetimer {
         private DispatcherTimer timerAnalyzer;
 
         int loadType = 0;
+
+        List<string> customLoadNames;
 
         readonly string[] anyPercentLoadNames = new string[] {
             "1-1 Start",
@@ -95,6 +99,31 @@ namespace LoadRetimer {
             };
             timerAnalyzer.Tick += Analyzer_Tick;
             timerAnalyzer.Start();
+
+            if (File.Exists("defaultNames.lns")) {
+                LoadCustomNames("defaultNames.lns");
+            } else {
+                customLoadNames = anyPercentLoadNames.ToList<string>();
+            }
+        }
+
+        private void LoadCustomNames(string filename) {
+            customLoadNames = new List<string>();
+            foreach (string line in File.ReadLines(filename)) {
+                customLoadNames.Add(line);
+            }
+            string categoryName = customLoadNames[0];
+            ((ComboBoxItem)LoadCategory.Items[0]).Content = categoryName;
+            customLoadNames.RemoveAt(0);
+            for (int i = 0; i < LoadBox.Items.Count; i++) {
+                String newName;
+                if (i < customLoadNames.Count) {
+                    newName = customLoadNames[i];
+                } else {
+                    newName = String.Format("Load {0}", i + 1);
+                }
+                ((LoadInfo)((ListBoxItem)LoadBox.Items[i]).Content).Rename(newName);
+            }
         }
 
         private void ButtonPlayPause_Click(object sender, RoutedEventArgs e) {
@@ -130,8 +159,8 @@ namespace LoadRetimer {
             ListBoxItem lbi = new ListBoxItem();
             LoadInfo newLoad = new LoadInfo(String.Format("Load {0}", LoadBox.Items.Count + 1));
             if (loadType == 0) {
-                if (LoadBox.Items.Count < anyPercentLoadNames.Length) {
-                    newLoad.SetName(anyPercentLoadNames[LoadBox.Items.Count]);
+                if (LoadBox.Items.Count < customLoadNames.Count) {
+                    newLoad.SetName(customLoadNames[LoadBox.Items.Count]);
                 }
             }
             lbi.Content = newLoad;
@@ -195,6 +224,15 @@ namespace LoadRetimer {
         }
 
         const byte CURR_VERSION = 3;
+
+        private void OpenLoadNames_Click(object sender, RoutedEventArgs e) {
+            var ofd = new OpenFileDialog {
+                Title = "Select load names",
+                Filter = "Load Retimer Name files (*.lns)|*.lns|All files (*.*)|*.*"
+            };
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+            LoadCustomNames(ofd.FileName);
+        }
 
         private void OpenLoads_Click(object sender, RoutedEventArgs e) {
             var ofd = new OpenFileDialog {

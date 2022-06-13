@@ -35,6 +35,10 @@ namespace LoadRetimer {
             isInclusive = true;
         }
 
+        public void Rename(String newName) {
+            SetName(newName);
+        }
+
         public void SetBegin(TimeSpan begin) {
             frameStart = (long) Math.Round(begin.TotalSeconds * MainWindow.frameRate);
             TryCalculate();

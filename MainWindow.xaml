@@ -24,6 +24,7 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="3">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open Video" Click="OpenFile_Click" />
+                <MenuItem Header="_Open Load Names" Click="OpenLoadNames_Click" />
                 <MenuItem Header="_Open Loads" Click="OpenLoads_Click" />
                 <MenuItem Header="_Save Loads" Click="SaveLoads_Click" />
                 <MenuItem Header="_Info" Click="Info_Click" />
@@ -64,7 +65,7 @@
         <ListBox Grid.Row="2" Grid.Column="2" x:Name="LoadBox" HorizontalContentAlignment="Stretch" />
         <ComboBox x:Name="LoadCategory" Grid.Row="3" Grid.Column="2" SelectionChanged="ComboBox_SelectionChanged">
             <ComboBoxItem IsSelected="True">NSMBW Any%</ComboBoxItem>
-            <ComboBoxItem>Other</ComboBoxItem>
+            <ComboBoxItem>Generic/Extra Loads</ComboBoxItem>
         </ComboBox>
         <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
